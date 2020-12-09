@@ -1,0 +1,33 @@
+ public static bool Insert(Product product)
+        {
+            bool status = false;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(conString))
+                {
+                    if (con.State == ConnectionState.Closed)
+                        con.Open();
+                    string query = "INSERT INTO products (Id,Title, Description, ImageUrl, UnitPrice, Quantity) " +
+                        "VALUES (@Id, @Title, @Description, @Image, @UnitPrice, @Quantity)";
+                    SqlCommand cmd = new SqlCommand(query, con);
+                    cmd.Parameters.Add(new SqlParameter("@Id", product.ID));
+                    cmd.Parameters.Add(new SqlParameter("@Title", product.Title));
+                    cmd.Parameters.Add(new SqlParameter("@Description", product.Description));
+                    cmd.Parameters.Add(new SqlParameter("@Image", product.ImageUrl));
+                    cmd.Parameters.Add(new SqlParameter("@UnitPrice", product.UnitPrice));
+                    cmd.Parameters.Add(new SqlParameter("@Quantity", product.Quantity));
+
+                    cmd.ExecuteNonQuery();// DML
+
+                    if (con.State == ConnectionState.Open)
+                        con.Close();
+                    status = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                throw ex;
+            }
+            return status;
+        }
